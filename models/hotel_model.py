@@ -1,18 +1,22 @@
+from sqlalchemy import Column, String, Float
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-class HotelModel():
+Base = declarative_base()
 
-    def __init__(self, hotel_id, nome, estrelas, diaria, cidade):
-        self.__hotel_id = hotel_id
-        self.__nome = nome
-        self.__estrelas = estrelas
-        self.__diaria = diaria
-        self.__cidade = cidade
+class HotelModel(Base):
+    __tablename__ = 'hoteis'
+    hotel_id = Column(String, primary_key=True)
+    nome = Column(String)
+    estrelas = Column(Float)
+    diaria = Column(Float)
+    cidade = Column(String)
 
-    def json(self):
-        return {
-            'hotel_id': self.__hotel_id,
-            'nome': self.__nome,
-            'estrelas': self.__estrelas,
-            'diaria': self.__diaria,
-            'cidade': self.__cidade
-        }
+# Configurar a conexão com o banco de dados SQLite
+engine = create_engine('sqlite:///banco.db')
+Base.metadata.create_all(engine)
+
+# Configurar a sessão do SQLAlchemy
+Session = sessionmaker(bind=engine)
+session = Session()
