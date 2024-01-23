@@ -68,21 +68,25 @@ class Hotel(Resource):
     def put(self, hotel_id):
         dados = self.__parser.parse_args()
 
-        hotel = self.find_hotel(hotel_id)
+        hotel = session.query(HotelModel).filter_by(hotel_id=hotel_id).first()
         hotel_objeto = HotelModel(hotel_id, **dados)
-        novo_hotel = hotel_objeto.json()
 
         if hotel:
-            hotel.update(novo_hotel)
-            return {'hotel': hotel.json()}, 200
+            hotel.nome = dados['nome']
+            hotel.estrelas = dados['estrelas']
+            hotel.diaria = dados['diaria']
+            hotel.cidade = dados['cidade']
+            session.commit()
+            return {'hotel': hotel_objeto.json()}, 200
         else:
-            hoteis.append(novo_hotel)
-            return {'hotel': novo_hotel}, 201
+            session.add(hotel_objeto)
+            session.commit()
+            return {'hotel':hotel_objeto.json()}, 201
 
     def delete(self, hotel_id):
-        hotel = self.find_hotel(hotel_id)
+        hotel = session.query(HotelModel).filter_by(hotel_id=hotel_id).first()
         if hotel:
-            hoteis.remove(hotel.json())
+            session.delete(hotel)
             return {'mensagem': 'Hotel removido com sucesso'}
         return {'mensagem': 'Hotel not found'}, 404
 
