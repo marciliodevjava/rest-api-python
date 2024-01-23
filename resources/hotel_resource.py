@@ -1,4 +1,5 @@
 from flask_restful import Resource, reqparse
+
 from models.hotel_model import HotelModel
 from sql_alchemy import session
 
@@ -81,7 +82,7 @@ class Hotel(Resource):
         else:
             session.add(hotel_objeto)
             session.commit()
-            return {'hotel':hotel_objeto.json()}, 201
+            return {'hotel': hotel_objeto.json()}, 201
 
     def delete(self, hotel_id):
         hotel = session.query(HotelModel).filter_by(hotel_id=hotel_id).first()
