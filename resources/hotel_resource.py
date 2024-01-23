@@ -56,7 +56,7 @@ class Hotel(Resource):
             return {'mensagem': 'O campo hotel_id não pode ser nulo'}, 400
 
         hotel_objeto = HotelModel(hotel_id, **dados)
-        hotel = HotelModel.find_hotel(hotel_id)
+        hotel = HotelModel.busca_hotel(hotel_id)
         if hotel:
             return {'mensagem': 'Hotel já existe na base de dados', 'hotel': hotel.json()}, 200
 
@@ -68,7 +68,7 @@ class Hotel(Resource):
     def put(self, hotel_id):
         dados = self.__parser.parse_args()
 
-        hotel = HotelModel.find_hotel(hotel_id)
+        hotel = HotelModel.busca_hotel(hotel_id)
         hotel_objeto = HotelModel(hotel_id, **dados)
 
         if hotel:
@@ -84,7 +84,7 @@ class Hotel(Resource):
             return {'hotel': hotel_objeto.json()}, 201
 
     def delete(self, hotel_id):
-        hotel = HotelModel.find_hotel(hotel_id)
+        hotel = HotelModel.busca_hotel(hotel_id)
         if hotel:
             session.delete(hotel)
             return {'mensagem': 'Hotel removido com sucesso'}
