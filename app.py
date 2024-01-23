@@ -1,6 +1,6 @@
 from flask import Flask
-from flask_restful import Api, Resource, reqparse
-from models.hotel_model import HotelModel, session
+from flask_restful import Api
+
 from resources.hotel_resource import Hotel, Hoteis
 
 app = Flask(__name__)
