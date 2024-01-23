@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Float
 
-from sql_alchemy import Base
+from sql_alchemy import Base, session
 
 
 class HotelModel(Base):
@@ -26,3 +26,12 @@ class HotelModel(Base):
             'diaria': float(self.diaria),
             'cidade': str(self.cidade)
         }
+
+    @classmethod
+    def find_hotel(cls, hotel_id):
+        hotel = session.query(cls).filter_by(hotel_id=hotel_id).first()
+        if hotel:
+            return hotel
+
+        return None
+
