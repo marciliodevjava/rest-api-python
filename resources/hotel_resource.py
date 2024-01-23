@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse
-from models.hotel_model import HotelModel
+from models.hotel_model import HotelModel, session
 
 hoteis = [
     {
@@ -40,48 +40,51 @@ class Hotel(Resource):
         self.__parser.add_argument('cidade', type=str)
 
     def get(self, hotel_id):
-        hotel = Hotel.find_hotel(hotel_id)
-        if hotel != None:
-            return {'Hotel': hotel}
+        hotel = self.find_hotel(hotel_id)
+        if hotel:
+            return {'hotel': hotel.json()}
 
         return {'message': 'Hotel not found.'}, 404
 
     def post(self, hotel_id):
         dados = self.__parser.parse_args()
 
+        # Verifica se o 'hotel_id' foi passado corretamente
+        if not hotel_id:
+            return {'mensagem': 'O campo hotel_id não pode ser nulo'}, 400
+
         hotel_objeto = HotelModel(hotel_id, **dados)
-        # novo_hotel = {'hotel_id': hotel_id, **dados}
-        hotel = Hotel.find_hotel(hotel_id)
+        new_hotel = hotel_objeto.json()
+        hotel = session.query(HotelModel).filter_by(hotel_id=hotel_id).first()
         if hotel:
-            return {'menssagem': 'Hotel já existe na base de dados', 'Hotel': hotel}, 200
-        novo_hotel = hotel_objeto.json()
-        hoteis.append(novo_hotel)
-        return {'hotel': novo_hotel}, 201
+            return {'mensagem': 'Hotel já existe na base de dados', 'hotel': hotel.json()}, 200
+
+        session.add(hotel_objeto)
+        session.commit()
+
+        return {'mensagem': 'Hotel adicionado com sucesso', 'hotel': new_hotel}, 201
 
     def put(self, hotel_id):
         dados = self.__parser.parse_args()
 
-        hotel = Hotel.find_hotel(hotel_id)
+        hotel = self.find_hotel(hotel_id)
         hotel_objeto = HotelModel(hotel_id, **dados)
         novo_hotel = hotel_objeto.json()
-        #novo_hotel = {'hotel_id': hotel_id, **dados}
+
         if hotel:
             hotel.update(novo_hotel)
-            return {'Hotel': hotel}, 200
+            return {'hotel': hotel.json()}, 200
         else:
             hoteis.append(novo_hotel)
-            return {'Hotel': novo_hotel}, 201
+            return {'hotel': novo_hotel}, 201
 
     def delete(self, hotel_id):
-        hotel = Hotel.find_hotel(hotel_id)
+        hotel = self.find_hotel(hotel_id)
         if hotel:
-            hoteis.remove(hotel)
-            return {'menssagem': 'Hotel removido com sucesso'}
-        return {'menssagem': 'Hotel not found'}, 404
+            hoteis.remove(hotel.json())
+            return {'mensagem': 'Hotel removido com sucesso'}
+        return {'mensagem': 'Hotel not found'}, 404
 
-    @staticmethod
-    def find_hotel(hotel_id):
-        for hotel in hoteis:
-            if hotel_id == hotel['hotel_id']:
-                return hotel
-        return None
+    def find_hotel(self, hotel_id):
+        hotel = session.query(HotelModel).filter_by(hotel_id=hotel_id).first()
+        return hotel
