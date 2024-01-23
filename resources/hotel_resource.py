@@ -47,7 +47,6 @@ class Hotel(Resource):
         hotel = session.query(HotelModel).filter_by(hotel_id=hotel_id).first()
         if hotel:
             return {'hotel': hotel.json()}
-
         return {'message': 'Hotel not found.'}, 404
 
     def post(self, hotel_id):
@@ -89,6 +88,7 @@ class Hotel(Resource):
         if hotel:
             session.delete(hotel)
             return {'mensagem': 'Hotel removido com sucesso'}
+
         return {'mensagem': 'Hotel not found'}, 404
 
     def find_hotel(self, hotel_id):
