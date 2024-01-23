@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
-from models.hotel_model import HotelModel, session
+from models.hotel_model import HotelModel
+from sql_alchemy import session
 
 hoteis = [
     {
