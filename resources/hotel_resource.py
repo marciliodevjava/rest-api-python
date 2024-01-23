@@ -28,7 +28,9 @@ hoteis = [
 
 class Hoteis(Resource):
     def get(self):
-        return {'hoteis': hoteis}
+        hotel = session.query(HotelModel).order_by(HotelModel.nome).all()
+        hoteis = [hoteis.json() for hoteis in hotel]
+        return {'Hoteis': hoteis}
 
 
 class Hotel(Resource):
@@ -40,7 +42,7 @@ class Hotel(Resource):
         self.__parser.add_argument('cidade', type=str)
 
     def get(self, hotel_id):
-        hotel = self.find_hotel(hotel_id)
+        hotel = session.query(HotelModel).filter_by(hotel_id=hotel_id).first()
         if hotel:
             return {'hotel': hotel.json()}
 
@@ -49,12 +51,10 @@ class Hotel(Resource):
     def post(self, hotel_id):
         dados = self.__parser.parse_args()
 
-        # Verifica se o 'hotel_id' foi passado corretamente
         if not hotel_id:
             return {'mensagem': 'O campo hotel_id não pode ser nulo'}, 400
 
         hotel_objeto = HotelModel(hotel_id, **dados)
-        new_hotel = hotel_objeto.json()
         hotel = session.query(HotelModel).filter_by(hotel_id=hotel_id).first()
         if hotel:
             return {'mensagem': 'Hotel já existe na base de dados', 'hotel': hotel.json()}, 200
@@ -62,7 +62,7 @@ class Hotel(Resource):
         session.add(hotel_objeto)
         session.commit()
 
-        return {'mensagem': 'Hotel adicionado com sucesso', 'hotel': new_hotel}, 201
+        return {'mensagem': 'Hotel adicionado com sucesso', 'hotel': hotel_objeto.json()}, 201
 
     def put(self, hotel_id):
         dados = self.__parser.parse_args()
