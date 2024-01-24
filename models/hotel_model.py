@@ -5,14 +5,14 @@ from sql_alchemy import Base, session
 
 class HotelModel(Base):
     __tablename__ = 'hoteis'
-    hotel_id = Column(String, primary_key=True)  # Removido autoincrement=True
+    hotel_id = Column(String, primary_key=True)
     nome = Column(String(80))
     estrelas = Column(Float(precision=1))
     diaria = Column(Float(precision=2))
     cidade = Column(String(45))
 
     def __init__(self, hotel_id, nome, estrelas, diaria, cidade):
-        self.hotel_id = hotel_id  # Modificado para usar o nome da coluna diretamente
+        self.hotel_id = hotel_id
         self.nome = nome
         self.estrelas = estrelas
         self.diaria = diaria
@@ -27,6 +27,10 @@ class HotelModel(Base):
             'cidade': str(self.cidade)
         }
 
+    def salva_hotel(self):
+        session.add(self)
+        session.commit()
+
     @classmethod
     def busca_hotel(cls, hotel_id):
         hotel = session.query(cls).filter_by(hotel_id=hotel_id).first()
@@ -34,4 +38,3 @@ class HotelModel(Base):
             return hotel
 
         return None
-
