@@ -1,3 +1,6 @@
+from secrets import compare_digest
+
+from flask_jwt_extended import create_access_token
 from flask_restful import Resource, reqparse
 
 from models.usuario_model import UsuarioModel
@@ -67,4 +70,15 @@ class UsuarioLogin(Resource):
         self.__parcer.add_argument('senha', type=str, required=True, help='O campo senha não foi envaido')
 
     def post(self):
-        pass
+        dados = self.__parcer.parse_args()
+        user = UsuarioModel.busca_login(dados['login'])
+        if user:
+            if user and compare_digest(user.senha, dados['senha']):
+                token = create_access_token(identity=user.user_id)
+                return {'message': f'Usuario Logado com SUCESSO!',
+                        'token': token,
+                        'nome': user.nome,
+                        'login': user.login}, 200
+            else:
+                return {'message': 'Senha INCORRETA, tente novamente'}, 404
+        return {'message': 'Usuario e senha incoretos!'}, 404
