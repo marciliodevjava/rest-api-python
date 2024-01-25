@@ -1,32 +1,35 @@
-import datetime
+from flask_restful import Resource, reqparse
 
-from sqlalchemy import Column, String, Integer
+from models.usuario_model import UsuarioModel
+from sql_alchemy import session
 
-from sql_alchemy import Base, session
+
+class Usuarios(Resource):
+    def get(self):
+        usuario = session.query(UsuarioModel).filter_by(UsuarioModel.nome).all()
+        usuarios = [usuarios.json() for usuarios in usuario]
+        return {'Usuários': usuarios}
 
 
-class UsuarioModel(Base):
-    _tablename__ = 'usuarios'
-    user_id = Column(Integer, primary_key=True)
-    nome = Column(String(150))
-    login = Column(String(40))
-    senha = Column(String(100))
+class Usuario(Resource):
+    def __init__(self):
+        self.__parcer = reqparse.RequestParser()
+        self.__parcer.add_argument('name', type=str)
+        self.__parcer.add_argument('login', type=str)
+        self.__parcer.add_argument('senha', type=str)
 
-    def __init__(self, nome, login, senha):
-        self.__nome = nome
-        self.__login = login
-        self.__senha = senha
-
-    def json(self):
-        return {
-            'nome': self.__nome,
-            'login': self.login,
-            'data': datetime.datetime.now()
-        }
-
-    @classmethod
-    def busca_usuario(cls, nome):
-        usuario = session.query(cls).filter_by(nome=nome).first()
+    def get(self, user_id):
+        usuario = session.query(UsuarioModel).filter_by(user_id=user_id).first()
         if usuario:
-            return usuario
-        return None
+            return {'Usuário': usuario}
+        return {'message': 'User not found'}, 404
+
+    def delete(self, user_id):
+        usuario = UsuarioModel.busca_usuario(user_id)
+        if usuario:
+            try:
+                session.delete(usuario)
+            except:
+                return {'message': 'Ocoreu um erro ao deletar o usuário'}, 500
+            return {'message': f'Usuário {usuario.nome} deletado com sucesso!'}
+        return {'message': 'Usuario not found'}, 404
