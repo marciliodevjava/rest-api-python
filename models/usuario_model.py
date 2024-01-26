@@ -1,6 +1,8 @@
 from sqlalchemy import Column, String, Integer, DateTime
 from sqlalchemy.sql import func
+
 from sql_alchemy import Base, session
+
 
 class UsuarioModel(Base):
     __tablename__ = 'usuarios'
@@ -31,4 +33,3 @@ class UsuarioModel(Base):
     def busca_login(cls, login):
         usuario = session.query(cls).filter_by(login=login).first()
         return usuario
-
