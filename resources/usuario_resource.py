@@ -3,6 +3,7 @@ from secrets import compare_digest
 from flask_jwt_extended import create_access_token
 from flask_restful import Resource, reqparse
 
+from enuns.message import MessagensEnum
 from models.usuario_model import UsuarioModel
 from sql_alchemy import session
 
@@ -35,9 +36,9 @@ class Usuario(Resource):
             try:
                 session.delete(usuario)
             except:
-                return {'message': 'Ocoreu um erro ao deletar o usuário'}, 500
-            return {'message': f'Usuário {usuario.nome} deletado com sucesso!'}
-        return {'message': 'Usuario not found'}, 404
+                return {'message': MessagensEnum.ERRO_DELECAO_USUARIO}, 500
+            return {'message': MessagensEnum.USUARIO_DELETADO_COM_SUCESSO.format(usuario.nome)}, 200
+        return {'message': MessagensEnum.ERRO_USUARIO_NOT_FOUND}, 404
 
 
 class UsuarioRegistro(Resource):
