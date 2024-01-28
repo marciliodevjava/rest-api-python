@@ -1,9 +1,9 @@
+from flask_jwt_extended import jwt_required
 from flask_restful import Resource, reqparse
 
 from enuns.message import MessagensEnumHotel
 from models.hotel_model import HotelModel
 from sql_alchemy import session
-from flask_jwt_extended import jwt_required
 
 hoteis = [
     {
