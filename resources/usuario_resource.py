@@ -1,8 +1,9 @@
 from secrets import compare_digest
 
-from flask_jwt_extended import create_access_token, jwt_required
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from flask_restful import Resource, reqparse
 
+from blacklist import BLACKLIST
 from enuns.message import MessagensEnumUsuario
 from models.usuario_model import UsuarioModel
 from sql_alchemy import session
@@ -36,6 +37,7 @@ class Usuario(Resource):
         if usuario:
             try:
                 session.delete(usuario)
+                session.commit()  # Adicionado commit para confirmar a exclusão
             except:
                 return {'message': MessagensEnumUsuario.ERRO_DELECAO_USUARIO}, 500
             return {'message': MessagensEnumUsuario.USUARIO_DELETADO_COM_SUCESSO.format(usuario.nome)}, 200
@@ -47,7 +49,7 @@ class UsuarioRegistro(Resource):
         self.__parcer = reqparse.RequestParser()
         self.__parcer.add_argument('nome', type=str, required=None)
         self.__parcer.add_argument('login', type=str, required=True, help='O campo login tem que ser passado.')
-        self.__parcer.add_argument('senha', type=str, required='O campo senha tem que ser passado.')
+        self.__parcer.add_argument('senha', type=str, required=True, help='O campo senha tem que ser passado.')
 
     # /cadastro
     @jwt_required()
@@ -70,7 +72,7 @@ class UsuarioLogin(Resource):
     def __init__(self):
         self.__parcer = reqparse.RequestParser()
         self.__parcer.add_argument('login', type=str, required=True, help='O campo login não foi enviado')
-        self.__parcer.add_argument('senha', type=str, required=True, help='O campo senha não foi envaido')
+        self.__parcer.add_argument('senha', type=str, required=True, help='O campo senha não foi enviado')
 
     def post(self):
         dados = self.__parcer.parse_args()
@@ -78,10 +80,18 @@ class UsuarioLogin(Resource):
         if user:
             if user and compare_digest(user.senha, dados['senha']):
                 token = create_access_token(identity=user.user_id)
-                return {'message': MessagensEnumUsuario.USUARIO_CRIADO_COM_SUCESSO,
+                return {'message': MessagensEnumUsuario.USUARIO_LOGADO_COM_SUCESSO,
                         'acces-token': token,
                         'nome': user.nome,
                         'login': user.login}, 200
             else:
                 return {'message': MessagensEnumUsuario.SENHA_INCORRETA}, 404
         return {'message': MessagensEnumUsuario.USUARIO_E_SENHA_INCORRETO}, 404
+
+
+class UserLogout(Resource):
+    @jwt_required()
+    def post(self):
+        jwt_id = get_jwt_identity()
+        BLACKLIST.add(jwt_id)
+        return {'message': 'Logout out successfully'}, 200
