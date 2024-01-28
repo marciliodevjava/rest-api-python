@@ -4,34 +4,22 @@ from flask_restful import Resource, reqparse
 from enuns.message import MessagensEnumHotel
 from models.hotel_model import HotelModel
 from sql_alchemy import session
+import sqlite3
 
-hoteis = [
-    {
-        'hotel_id': 'alpha',
-        'nome': 'Alpha Hotel',
-        'estrelas': 4.3,
-        'diaria': 420.34,
-        'cidade': 'Rio de Janeiro'
-    },
-    {
-        'hotel_id': 'bravo',
-        'nome': 'Brabo Hotel',
-        'estrelas': 4.8,
-        'diaria': 380.90,
-        'cidade': 'São Paulo'
-    },
-    {
-        'hotel_id': 'charlie',
-        'nome': 'Charlie Hotel',
-        'estrelas': 3.9,
-        'diaria': 320.20,
-        'cidade': 'Brasilia'
-    },
-]
+path_params = reqparse.RequestParser()
+path_params.add_argument('cidade', type=str)
+path_params.add_argument('estrelas_min', type=float)
+path_params.add_argument('estrelas_max', type=float)
+path_params.add_argument('diaria_min', type=float)
+path_params.add_argument('diaria_max', type=float)
+path_params.add_argument('limit', type=float)
+path_params.add_argument('offset', type=float)
 
 
 class Hoteis(Resource):
     def get(self):
+        dados = path_params.parse_args()
+        dados_validos = {chave: dados[chave] for chave in dados if dados[chave] is not None}
         hotel = session.query(HotelModel).order_by(HotelModel.nome).all()
         hoteis = [hoteis.json() for hoteis in hotel]
         return {'Hoteis': hoteis}
@@ -103,6 +91,7 @@ class Hotel(Resource):
         if hotel:
             try:
                 session.delete(hotel)
+                session.commit()
             except:
                 return {'message': MessagensEnumHotel.HOTEL_ERRO_DELETAR_INFORMACAO}, 500
             return {'mensagem': MessagensEnumHotel.HOTEL_REMOVIDO_COM_SUCESSO}
