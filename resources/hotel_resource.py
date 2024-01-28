@@ -3,6 +3,7 @@ from flask_restful import Resource, reqparse
 from enuns.message import MessagensEnumHotel
 from models.hotel_model import HotelModel
 from sql_alchemy import session
+from flask_jwt_extended import jwt_required
 
 hoteis = [
     {
@@ -50,6 +51,7 @@ class Hotel(Resource):
             return {'hotel': hotel.json()}
         return {'message': MessagensEnumHotel.HOTEL_NOT_FOUND}, 404
 
+    @jwt_required()
     def post(self, hotel_id):
         dados = self.__parser.parse_args()
 
@@ -70,6 +72,7 @@ class Hotel(Resource):
         return {'message': MessagensEnumHotel.HOTEL_ADICIONADO_COM_SUCESSO,
                 'hotel': hotel_objeto.json()}, 201
 
+    @jwt_required()
     def put(self, hotel_id):
         dados = self.__parser.parse_args()
 
@@ -94,6 +97,7 @@ class Hotel(Resource):
                 return {'message': MessagensEnumHotel.HOTEL_OCOREU_ERRO_GRAVAR_INFORMACAO}, 500
             return {'hotel': hotel_objeto.json()}, 201
 
+    @jwt_required()
     def delete(self, hotel_id):
         hotel = HotelModel.busca_hotel(hotel_id)
         if hotel:
