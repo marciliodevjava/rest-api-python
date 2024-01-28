@@ -3,7 +3,7 @@ from secrets import compare_digest
 from flask_jwt_extended import create_access_token
 from flask_restful import Resource, reqparse
 
-from enuns.message import MessagensEnum
+from enuns.message import MessagensEnumUsuario
 from models.usuario_model import UsuarioModel
 from sql_alchemy import session
 
@@ -28,7 +28,7 @@ class Usuario(Resource):
         usuario = session.query(UsuarioModel).filter_by(user_id=user_id).first()
         if usuario:
             return {'Usuário': usuario.json()}
-        return {'message': 'User not found'}, 404
+        return {'message': MessagensEnumUsuario.ERRO_USUARIO_NOT_FOUND}, 404
 
     def delete(self, user_id):
         usuario = UsuarioModel.busca_usuario(user_id)
@@ -36,9 +36,9 @@ class Usuario(Resource):
             try:
                 session.delete(usuario)
             except:
-                return {'message': MessagensEnum.ERRO_DELECAO_USUARIO}, 500
-            return {'message': MessagensEnum.USUARIO_DELETADO_COM_SUCESSO.format(usuario.nome)}, 200
-        return {'message': MessagensEnum.ERRO_USUARIO_NOT_FOUND}, 404
+                return {'message': MessagensEnumUsuario.ERRO_DELECAO_USUARIO}, 500
+            return {'message': MessagensEnumUsuario.USUARIO_DELETADO_COM_SUCESSO.format(usuario.nome)}, 200
+        return {'message': MessagensEnumUsuario.ERRO_USUARIO_NOT_FOUND}, 404
 
 
 class UsuarioRegistro(Resource):
@@ -53,14 +53,14 @@ class UsuarioRegistro(Resource):
         dados = self.__parcer.parse_args()
         login = session.query(UsuarioModel).filter_by(login=dados['login']).first()
         if login:
-            return {'message': f'Usuário com o login {dados["login"]} já existe'}, 500
+            return {'message': MessagensEnumUsuario.USUARIO_COM_LOGIN_JA_EXISTE.format(dados["login"])}, 500
         user = UsuarioModel(**dados)
         try:
             session.add(user)
             session.commit()
         except:
-            return {'message': 'Ocorreu um erro para salvar o usuário'}
-        return {'message': 'USUARIO CRIADO COM SUCESSO!',
+            return {'message': MessagensEnumUsuario.OCORREU_UM_ERRO_AO_SALVAR_USUARIO}
+        return {'message': MessagensEnumUsuario.USUARIO_CRIADO_COM_SUCESSO,
                 'Usuário': user.json()}, 201
 
 
@@ -76,10 +76,10 @@ class UsuarioLogin(Resource):
         if user:
             if user and compare_digest(user.senha, dados['senha']):
                 token = create_access_token(identity=user.user_id)
-                return {'message': f'Usuario Logado com SUCESSO!',
+                return {'message': MessagensEnumUsuario.USUARIO_CRIADO_COM_SUCESSO,
                         'acces-token': token,
                         'nome': user.nome,
                         'login': user.login}, 200
             else:
-                return {'message': 'Senha INCORRETA, tente novamente'}, 404
-        return {'message': 'Usuario e senha incoretos!'}, 404
+                return {'message': MessagensEnumUsuario.SENHA_INCORRETA}, 404
+        return {'message': MessagensEnumUsuario.USUARIO_E_SENHA_INCORRETO}, 404
