@@ -76,7 +76,7 @@ class UsuarioLogin(Resource):
             if user and compare_digest(user.senha, dados['senha']):
                 token = create_access_token(identity=user.user_id)
                 return {'message': f'Usuario Logado com SUCESSO!',
-                        'token': token,
+                        'acces-token': token,
                         'nome': user.nome,
                         'login': user.login}, 200
             else:
