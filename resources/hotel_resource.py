@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 
+from enuns.message import MessagensEnumHotel
 from models.hotel_model import HotelModel
 from sql_alchemy import session
 
@@ -47,25 +48,27 @@ class Hotel(Resource):
         hotel = session.query(HotelModel).filter_by(hotel_id=hotel_id).first()
         if hotel:
             return {'hotel': hotel.json()}
-        return {'message': 'Hotel not found.'}, 404
+        return {'message': MessagensEnumHotel.HOTEL_NOT_FOUND}, 404
 
     def post(self, hotel_id):
         dados = self.__parser.parse_args()
 
         if not hotel_id:
-            return {'message': 'O campo hotel_id não pode ser nulo'}, 400
+            return {'message': MessagensEnumHotel.HOTEL_COM_NAO_PODE_NULO}, 400
 
         hotel_objeto = HotelModel(hotel_id, **dados)
         hotel = HotelModel.busca_hotel(hotel_id)
         if hotel:
-            return {'message': 'Hotel já existe na base de dados', 'hotel': hotel.json()}, 200
+            return {'message': MessagensEnumHotel.HOTEL_EXISTE_NA_BASE_DE_DADO,
+                    'hotel': hotel.json()}, 200
 
         try:
             session.add(hotel_objeto)
             session.commit()
         except:
-            return {'message': 'Occoreu um erro ao gravar informação'}, 500
-        return {'message': 'Hotel adicionado com sucesso', 'hotel': hotel_objeto.json()}, 201
+            return {'message': MessagensEnumHotel.HOTEL_OCOREU_ERRO_GRAVAR_INFORMACAO}, 500
+        return {'message': MessagensEnumHotel.HOTEL_ADICIONADO_COM_SUCESSO,
+                'hotel': hotel_objeto.json()}, 201
 
     def put(self, hotel_id):
         dados = self.__parser.parse_args()
@@ -81,14 +84,14 @@ class Hotel(Resource):
             try:
                 session.commit()
             except:
-                return {'message': 'Occoreu um erro ao gravar informação'}, 500
+                return {'message': MessagensEnumHotel.HOTEL_OCOREU_ERRO_GRAVAR_INFORMACAO}, 500
             return {'hotel': hotel_objeto.json()}, 200
         else:
             try:
                 session.add(hotel_objeto)
                 session.commit()
             except:
-                return {'message': 'Occoreu um erro ao gravar informação'}, 500
+                return {'message': MessagensEnumHotel.HOTEL_OCOREU_ERRO_GRAVAR_INFORMACAO}, 500
             return {'hotel': hotel_objeto.json()}, 201
 
     def delete(self, hotel_id):
@@ -97,7 +100,7 @@ class Hotel(Resource):
             try:
                 session.delete(hotel)
             except:
-                return {'message': 'Occoreu um erro ao deletar a informação'}, 500
-            return {'mensagem': 'Hotel removido com sucesso'}
+                return {'message': MessagensEnumHotel.HOTEL_ERRO_DELETAR_INFORMACAO}, 500
+            return {'mensagem': MessagensEnumHotel.HOTEL_REMOVIDO_COM_SUCESSO}
 
-        return {'mensagem': 'Hotel not found'}, 404
+        return {'mensagem': MessagensEnumHotel.HOTEL_NOT_FOUND}, 404
