@@ -1,6 +1,6 @@
 from secrets import compare_digest
 
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required
 from flask_restful import Resource, reqparse
 
 from enuns.message import MessagensEnumUsuario
@@ -30,6 +30,7 @@ class Usuario(Resource):
             return {'Usuário': usuario.json()}
         return {'message': MessagensEnumUsuario.ERRO_USUARIO_NOT_FOUND}, 404
 
+    @jwt_required()
     def delete(self, user_id):
         usuario = UsuarioModel.busca_usuario(user_id)
         if usuario:
@@ -49,6 +50,7 @@ class UsuarioRegistro(Resource):
         self.__parcer.add_argument('senha', type=str, required='O campo senha tem que ser passado.')
 
     # /cadastro
+    @jwt_required()
     def post(self):
         dados = self.__parcer.parse_args()
         login = session.query(UsuarioModel).filter_by(login=dados['login']).first()
