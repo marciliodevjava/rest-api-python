@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Float
+from sqlalchemy import Column, String, Float, Integer, ForeignKey
 
 from sql_alchemy import Base, session
 
@@ -10,13 +10,17 @@ class HotelModel(Base):
     estrelas = Column(Float(precision=1))
     diaria = Column(Float(precision=2))
     cidade = Column(String(45))
+    site_id = Column(Integer, ForeignKey('sites.site_id'))
 
-    def __init__(self, hotel_id, nome, estrelas, diaria, cidade):
+    #    site = relationship('SitesModel')
+
+    def __init__(self, hotel_id, nome, estrelas, diaria, cidade, site_id):
         self.hotel_id = hotel_id
         self.nome = nome
         self.estrelas = estrelas
         self.diaria = diaria
         self.cidade = cidade
+        self.site_id = site_id
 
     def json(self):
         return {
@@ -24,7 +28,8 @@ class HotelModel(Base):
             'nome': str(self.nome),
             'estrelas': float(self.estrelas),
             'diaria': float(self.diaria),
-            'cidade': str(self.cidade)
+            'cidade': str(self.cidade),
+            'site_id': int(self.site_id)
         }
 
     def salva_hotel(self):
