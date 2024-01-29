@@ -16,12 +16,16 @@ class Hoteis(Resource):
         estrelas_min = request.args.get('estrelas_min', type=float)
         diaria_min = request.args.get('diaria_min', type=float)
         diaria_max = request.args.get('diaria_max', type=float)
+        offset = request.args.get('offset', type=int)
+        limit = request.args.get('limit', type=int)
 
         return {
             'cidade': cidade,
             'estrelas_min': estrelas_min,
             'diaria_min': diaria_min,
-            'diaria_max': diaria_max
+            'diaria_max': diaria_max,
+            'offset': offset,
+            'limit': limit
         }
 
     def get(self):
@@ -32,16 +36,19 @@ class Hoteis(Resource):
         dados_validos = {chave: dados[chave] for chave in dados if dados[chave] is not None}
 
         filtro = FiltroHotel.normalize_path_params(**dados_validos)
+        offset = FiltroHotel.normalize_filter_offset(**dados_validos)
+        limit = FiltroHotel.normalize_filter_limit(**dados_validos)
 
         if filtro:
-            hotel = session.query(HotelModel).order_by(HotelModel.nome).filter_by(**filtro).all()
+            hotel = session.query(HotelModel).order_by(HotelModel.nome).filter_by(**filtro).offset(offset).limit(
+                limit).all()
             if hotel:
                 hoteis = [hoteis.json() for hoteis in hotel]
                 return {'Hoteis': hoteis}
             else:
                 return {'message': MessagensEnumHotel.HOTEL_SOLICITACAO_SEM_CONTEUDO}
         else:
-            hotel = session.query(HotelModel).order_by(HotelModel.nome).all()
+            hotel = session.query(HotelModel).order_by(HotelModel.nome).offset(offset).limit(limit).all()
         hoteis = [hoteis.json() for hoteis in hotel]
         return {'Hoteis': hoteis}
 
