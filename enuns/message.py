@@ -23,3 +23,6 @@ class MessagensEnumHotel(Enum):
     HOTEL_ERRO_DELETAR_INFORMACAO = 'Occoreu um erro ao deletar a informação.'
     HOTEL_REMOVIDO_COM_SUCESSO = 'Hotel removido com sucesso.'
     HOTEL_SOLICITACAO_SEM_CONTEUDO ='Solicitação não retornou conteúdo.'
+
+class MessagensSites(Enum):
+    SITES_NAO_ENCONTRATOS = 'Não existe nenhum site na base de dados'
