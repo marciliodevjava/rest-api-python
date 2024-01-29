@@ -1,26 +1,47 @@
+import sqlite3
+
+from flask import request
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource, reqparse
 
 from enuns.message import MessagensEnumHotel
+from filtros.filtros import FiltroHotel
 from models.hotel_model import HotelModel
 from sql_alchemy import session
-import sqlite3
-
-path_params = reqparse.RequestParser()
-path_params.add_argument('cidade', type=str)
-path_params.add_argument('estrelas_min', type=float)
-path_params.add_argument('estrelas_max', type=float)
-path_params.add_argument('diaria_min', type=float)
-path_params.add_argument('diaria_max', type=float)
-path_params.add_argument('limit', type=float)
-path_params.add_argument('offset', type=float)
 
 
 class Hoteis(Resource):
+    def retorna_filtros(self):
+        cidade = request.args.get('cidade')
+        estrelas_min = request.args.get('estrelas_min', type=float)
+        diaria_min = request.args.get('diaria_min', type=float)
+        diaria_max = request.args.get('diaria_max', type=float)
+
+        return {
+            'cidade': cidade,
+            'estrelas_min': estrelas_min,
+            'diaria_min': diaria_min,
+            'diaria_max': diaria_max
+        }
+
     def get(self):
-        dados = path_params.parse_args()
+        connection = sqlite3.connect('banco.db')
+        cursor = connection.cursor()
+
+        dados = self.retorna_filtros()
         dados_validos = {chave: dados[chave] for chave in dados if dados[chave] is not None}
-        hotel = session.query(HotelModel).order_by(HotelModel.nome).all()
+
+        filtro = FiltroHotel.normalize_path_params(**dados_validos)
+
+        if filtro:
+            hotel = session.query(HotelModel).order_by(HotelModel.nome).filter_by(**filtro).all()
+            if hotel:
+                hoteis = [hoteis.json() for hoteis in hotel]
+                return {'Hoteis': hoteis}
+            else:
+                return {'message': MessagensEnumHotel.HOTEL_SOLICITACAO_SEM_CONTEUDO}
+        else:
+            hotel = session.query(HotelModel).order_by(HotelModel.nome).all()
         hoteis = [hoteis.json() for hoteis in hotel]
         return {'Hoteis': hoteis}
 
