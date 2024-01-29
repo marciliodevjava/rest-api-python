@@ -27,9 +27,13 @@ class UsuarioModel(Base):
     @classmethod
     def busca_usuario(cls, user_id):
         usuario = session.query(cls).filter_by(user_id=user_id).first()
-        return usuario
+        if usuario:
+            return usuario
+        return None
 
     @classmethod
     def busca_login(cls, login):
         usuario = session.query(cls).filter_by(login=login).first()
-        return usuario
+        if usuario:
+            return usuario
+        return None
