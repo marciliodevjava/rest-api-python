@@ -33,6 +33,11 @@ class MessagensEnumHotel(Enum):
 
 
 class MessagensEnumSites(Enum):
-    SITES_NAO_ENCONTRATOS = 'Não existe nenhum site na base de dados'
-    MENSAGEM_PARANS_URL = "O Campo 'url' tem que ser enviado"
-    MENSAGEM_PARANS_NOME = "O Campo 'nome tem que ser enviado"
+    SITE_ERRO_ENVIAR_PARAMETROS = "Dados não foi enviado para salvar o site."
+    SITES_NAO_ENCONTRATOS = 'Não existe nenhum site na base de dados.'
+    MENSAGEM_PARANS_URL = "O Campo 'url' tem que ser enviado."
+    MENSAGEM_PARANS_NOME = "O Campo 'nome tem que ser enviado."
+    SITE_ERRO_AO_SALVAR_SITE = "Erro ao salvar site."
+    SITE_DELETADO_COM_SUCESSO = 'Site deletado com sucesso.'
+    SITE_OCORREU_UM_ERRO_DELETAR = 'Ocorreu um erro ao deletar site.'
+    SITE_NÃO_ENCONTRATO_PARA_DELETAR = 'Site não foi encontrato para ser deletado.'
