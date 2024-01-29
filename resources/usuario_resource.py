@@ -49,8 +49,8 @@ class UsuarioRegistro(Resource):
     def __init__(self):
         self.__parcer = reqparse.RequestParser()
         self.__parcer.add_argument('nome', type=str, required=None)
-        self.__parcer.add_argument('login', type=str, required=True, help='O campo login tem que ser passado.')
-        self.__parcer.add_argument('senha', type=str, required=True, help='O campo senha tem que ser passado.')
+        self.__parcer.add_argument('login', type=str, required=True, help=MessagensEnumUsuario.MENSAGEM_PARANS_LOGIN)
+        self.__parcer.add_argument('senha', type=str, required=True, help=MessagensEnumUsuario.MENSAGEM_PARANS_SENHA)
 
     # /cadastro
     @jwt_required()
@@ -72,8 +72,8 @@ class UsuarioRegistro(Resource):
 class UsuarioLogin(Resource):
     def __init__(self):
         self.__parcer = reqparse.RequestParser()
-        self.__parcer.add_argument('login', type=str, required=True, help='O campo login não foi enviado')
-        self.__parcer.add_argument('senha', type=str, required=True, help='O campo senha não foi enviado')
+        self.__parcer.add_argument('login', type=str, required=True, help=MessagensEnumUsuario.MENSAGEM_PARANS_LOGIN)
+        self.__parcer.add_argument('senha', type=str, required=True, help=MessagensEnumUsuario.MENSAGEM_PARANS_SENHA)
 
     def post(self):
         dados = self.__parcer.parse_args()
@@ -95,4 +95,4 @@ class UserLogout(Resource):
     def post(self):
         jti = get_jwt_identity()
         BLACKLIST.add(jti)
-        return jsonify(message="Token has been revoked"), 200
+        return jsonify(message=MessagensEnumUsuario.TOKEN_REVOGADO), 200
