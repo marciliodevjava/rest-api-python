@@ -26,15 +26,18 @@ BLACKLIST = set()
 
 
 @jwt.token_in_blocklist_loader
-def verifica_blacklist(jwt_data):
+def check_if_token_in_blacklist(jwt_header, jwt_data):
     return jwt_data['jti'] in BLACKLIST
 
-
 @jwt.revoked_token_loader
-def token_de_acesso_invalidado(jwt_data):
+def token_revoked_callback(jwt_header, jwt_data):
     BLACKLIST.add(jwt_data['jti'])
-    return jsonify({'message': 'You have been logged out.'}), 401
+    return jsonify({'message': 'Token has been revoked'}), 401
 
+@jwt.expired_token_loader
+def token_expired_token_loader(jwt_data):
+    BLACKLIST.add(jwt_data['jti'])
+    return jsonify({'message': 'Token has been expired'}), 401
 
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
