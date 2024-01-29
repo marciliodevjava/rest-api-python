@@ -1,5 +1,6 @@
 from secrets import compare_digest
 
+from flask import jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from flask_restful import Resource, reqparse
 
@@ -92,6 +93,6 @@ class UsuarioLogin(Resource):
 class UserLogout(Resource):
     @jwt_required()
     def post(self):
-        jwt_id = get_jwt_identity()
-        BLACKLIST.add(jwt_id)
-        return {'message': 'Logout out successfully'}, 200
+        jti = get_jwt_identity()
+        BLACKLIST.add(jti)
+        return jsonify(message="Token has been revoked"), 200
