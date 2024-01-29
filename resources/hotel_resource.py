@@ -56,10 +56,11 @@ class Hoteis(Resource):
 class Hotel(Resource):
     def __init__(self):
         self.__parser = reqparse.RequestParser()
-        self.__parser.add_argument('nome', type=str, required=True, help="O campo 'nome' tem que ser enviado")
-        self.__parser.add_argument('estrelas', type=float, required=True, help="O campo 'estrelas' tem que ser enviado")
-        self.__parser.add_argument('diaria', type=float, required=True, help="O campo 'diaria' tem que ser enviado")
-        self.__parser.add_argument('cidade', type=str, required=True, help="O campo 'cidade' tem que ser enviado")
+        self.__parser.add_argument('nome', type=str, required=True, help=MessagensEnumHotel.MENSAGEM_PARANS_NOME)
+        self.__parser.add_argument('estrelas', type=float, required=True,
+                                   help=MessagensEnumHotel.MENSAGEM_PARANS_ESTRELAS)
+        self.__parser.add_argument('diaria', type=float, required=True, help=MessagensEnumHotel.MENSAGEM_PARANS_DIARIA)
+        self.__parser.add_argument('cidade', type=str, required=True, help=MessagensEnumHotel.MENSAGEM_PARANS_CIDADE)
 
     def get(self, hotel_id):
         hotel = session.query(HotelModel).filter_by(hotel_id=hotel_id).first()
