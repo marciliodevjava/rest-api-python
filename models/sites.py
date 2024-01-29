@@ -24,8 +24,24 @@ class SitesModel(Base):
         }
 
     @classmethod
-    def buscar_sites(cls, site_id):
-        site = session.query(cls).filter_by(url=site_id).first()
+    def buscar_site_id(cls, site_id):
+        site = session.query(cls).filter_by(site_id=site_id).first()
         if site:
             return site
         return None
+
+    @classmethod
+    def buscar_site_url(cls, url):
+        site = session.query(cls).filter_by(url=url).first()
+        if site:
+            return site
+        return None
+
+    @classmethod
+    def deletar_site_id(cls, site):
+        try:
+            session.delete(site)
+            session.commit()
+            return True
+        except:
+            return None
