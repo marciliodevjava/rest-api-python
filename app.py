@@ -4,8 +4,8 @@ from flask_restful import Api
 
 from my_custom_json_encoder import CustomJSONEncoder
 from resources.hotel_resource import Hotel, Hoteis
-from resources.usuario_resource import Usuario, Usuarios, UsuarioRegistro, UsuarioLogin, UserLogout
 from resources.site_resource import Sites, Site
+from resources.usuario_resource import Usuario, Usuarios, UsuarioRegistro, UsuarioLogin, UserLogout
 from sql_alchemy import Base, engine
 
 app = Flask(__name__)
@@ -34,15 +34,18 @@ BLACKLIST = set()
 def check_if_token_in_blacklist(jwt_header, jwt_data):
     return jwt_data['jti'] in BLACKLIST
 
+
 @jwt.revoked_token_loader
 def token_revoked_callback(jwt_header, jwt_data):
     BLACKLIST.add(jwt_data['jti'])
     return jsonify({'message': 'Token has been revoked'}), 401
 
+
 @jwt.expired_token_loader
 def token_expired_token_loader(jwt_data):
     BLACKLIST.add(jwt_data['jti'])
     return jsonify({'message': 'Token has been expired'}), 401
+
 
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
