@@ -33,12 +33,12 @@ class Site(Resource):
     def post(self):
         try:
             dados = self.__sites_parans.parse_args()
-            site = SiteMapper.mapear_site(dados)
+            site = SiteMapper.mapear_site(**dados)
             if site:
-                buscar_site = SitesModel.buscar_site_url(site['site_url'])
+                buscar_site = SitesModel.buscar_site_url(**dados)
                 if not buscar_site:
                     try:
-                        site = SitesModel(site)
+                        site = SitesModel(**site)
                         session.add(site)
                         session.commit()
                         return {'Site': site.json()}, 201
