@@ -3,9 +3,8 @@ from sqlalchemy.orm import relationship
 
 from sql_alchemy import Base, session
 
-
 class SitesModel(Base):
-    __table__ = 'sites'
+    __tablename__ = 'sites'
     site_id = Column(Integer, primary_key=True)
     nome = Column(String(150))
     url = Column(String(255))
