@@ -31,7 +31,7 @@ class Site(Resource):
         dados = self.__sites_parans.parse_args()
         site = SiteMapper.mapear_site(dados)
         if site:
-            buscar_site = SitesModel.buscar_site_url(site.get('site_url'))
+            buscar_site = SitesModel.buscar_site_url(site['site_url'])
             if not buscar_site:
                 try:
                     site = SitesModel(site)
