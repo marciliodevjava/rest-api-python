@@ -1,4 +1,6 @@
 class SiteMapper:
-    def mapear_site(self, nome, url, **dados):
-        return {'nome': nome,
+    @classmethod
+    def mapear_site(cls, url, nome, **dados):
+        site = {'nome': nome,
                 'url': url}
+        return site
