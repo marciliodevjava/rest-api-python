@@ -5,6 +5,7 @@ from flask_restful import Api
 from my_custom_json_encoder import CustomJSONEncoder
 from resources.hotel_resource import Hotel, Hoteis
 from resources.usuario_resource import Usuario, Usuarios, UsuarioRegistro, UsuarioLogin, UserLogout
+from resources.site_resource import Sites, Site
 from sql_alchemy import Base, engine
 
 app = Flask(__name__)
@@ -21,6 +22,10 @@ api.add_resource(Usuario, '/usuario/<int:user_id>')
 api.add_resource(UsuarioRegistro, '/cadastro')
 api.add_resource(UsuarioLogin, '/login')
 api.add_resource(UserLogout, '/logout')
+api.add_resource(Sites, "/sites")
+api.add_resource(Site, "/site/<string:url>", endpoint='get')
+api.add_resource(Site, "/site", endpoint='post')
+api.add_resource(Site, "/site/<int:site_id>", endpoint='delete')
 
 BLACKLIST = set()
 
