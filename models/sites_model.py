@@ -10,7 +10,7 @@ class SitesModel(Base):
     url = Column(String(255))
     hoteis_id = relationship('HotelModel')  # list de objetos hoteis
 
-    def __init__(self, nome, url):
+    def __init__(self, nome, url, **dados):
         self.nome = nome
         self.url = url
 
@@ -30,7 +30,7 @@ class SitesModel(Base):
         return None
 
     @classmethod
-    def buscar_site_url(cls, url):
+    def buscar_site_url(cls, url, **dados):
         site = session.query(cls).filter_by(url=url).first()
         if site:
             return site
