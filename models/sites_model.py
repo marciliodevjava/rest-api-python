@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 
 from sql_alchemy import Base, session
 
+
 class SitesModel(Base):
     __tablename__ = 'sites'
     site_id = Column(Integer, primary_key=True)
