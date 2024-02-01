@@ -33,6 +33,7 @@ class MessagensEnumHotel(Enum):
 
 
 class MessagensEnumSites(Enum):
+    ERRO_AO_CONSULTAR_NO_BANCO = "Erro ao consultar as informações no banco de dados."
     SITE_ERRO_ENVIAR_PARAMETROS = "Dados não foi enviado para salvar o site."
     SITES_NAO_ENCONTRATOS = 'Não existe nenhum site na base de dados.'
     MENSAGEM_PARANS_URL = "O Campo 'url' tem que ser enviado."
