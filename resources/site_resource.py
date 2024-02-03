@@ -5,7 +5,6 @@ from mapper.site_mapper import SiteMapper
 from models.sites_model import SitesModel
 from sql_alchemy import session
 
-
 class Sites(Resource):
     def get(self):
         sites = session.query(SitesModel).all()
