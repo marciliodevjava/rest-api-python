@@ -61,6 +61,7 @@ class Hotel(Resource):
                                    help=MessagensEnumHotel.MENSAGEM_PARANS_ESTRELAS)
         self.__parser.add_argument('diaria', type=float, required=True, help=MessagensEnumHotel.MENSAGEM_PARANS_DIARIA)
         self.__parser.add_argument('cidade', type=str, required=True, help=MessagensEnumHotel.MENSAGEM_PARANS_CIDADE)
+        self.__parser.add_argument('site_id', type=int, required=True, help=MessagensEnumHotel.MENSAGEM_PARANS_SITE )
 
     def get(self, hotel_id):
         hotel = session.query(HotelModel).filter_by(hotel_id=hotel_id).first()
