@@ -3,6 +3,7 @@ import sqlite3
 from flask import request
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource, reqparse
+from jwt import ExpiredSignatureError
 
 from enuns.message import MessagensEnumHotel
 from filtros.filtros import FiltroHotel
@@ -85,8 +86,10 @@ class Hotel(Resource):
         try:
             session.add(hotel_objeto)
             session.commit()
-        except:
+        except Exception as e:
             return {'message': MessagensEnumHotel.HOTEL_OCOREU_ERRO_GRAVAR_INFORMACAO}, 500
+        except ExpiredSignatureError as e:
+            return {'message': MessagensEnumHotel.HOTEL_TOKEN_EXPIRADO}, 500
         return {'message': MessagensEnumHotel.HOTEL_ADICIONADO_COM_SUCESSO,
                 'hotel': hotel_objeto.json()}, 201
 
@@ -111,7 +114,7 @@ class Hotel(Resource):
             try:
                 session.add(hotel_objeto)
                 session.commit()
-            except:
+            except Exception as e:
                 return {'message': MessagensEnumHotel.HOTEL_OCOREU_ERRO_GRAVAR_INFORMACAO}, 500
             return {'hotel': hotel_objeto.json()}, 201
 
@@ -122,7 +125,7 @@ class Hotel(Resource):
             try:
                 session.delete(hotel)
                 session.commit()
-            except:
+            except Exception as e:
                 return {'message': MessagensEnumHotel.HOTEL_ERRO_DELETAR_INFORMACAO}, 500
             return {'mensagem': MessagensEnumHotel.HOTEL_REMOVIDO_COM_SUCESSO}
 
