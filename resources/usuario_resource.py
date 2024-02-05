@@ -53,7 +53,6 @@ class UsuarioRegistro(Resource):
         self.__parcer.add_argument('senha', type=str, required=True, help=MessagensEnumUsuario.MENSAGEM_PARANS_SENHA)
 
     # /cadastro
-    @jwt_required()
     def post(self):
         dados = self.__parcer.parse_args()
         login = session.query(UsuarioModel).filter_by(login=dados['login']).first()
@@ -65,7 +64,7 @@ class UsuarioRegistro(Resource):
             session.commit()
         except:
             return {'message': MessagensEnumUsuario.OCORREU_UM_ERRO_AO_SALVAR_USUARIO}
-        return {'message': MessagensEnumUsuario.USUARIO_CRIADO_COM_SUCESSO,
+        return {'message': MessagensEnumUsuario.USUARIO_CRIADO_COM_SUCESSO.format(user.nome),
                 'Usuário': user.json()}, 201
 
 
