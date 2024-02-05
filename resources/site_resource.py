@@ -44,7 +44,7 @@ class Site(Resource):
                         return {'Site': site.json()}, 201
                     except:
                         return {'message': MessagensEnumSites.SITE_ERRO_AO_SALVAR_SITE}, 500
-                return {'message': MessagensEnumSites.SITE_JÁ_EXISTE_NA_BASE_DE_DADOS}, 400
+                return {'message': MessagensEnumSites.SITE_JA_EXISTE_NA_BASE_DE_DADOS}, 400
         except:
             return {'message': MessagensEnumSites.SITE_ERRO_ENVIAR_PARAMETROS}, 500
 
@@ -55,4 +55,4 @@ class Site(Resource):
             if result:
                 return {'message': MessagensEnumSites.SITE_DELETADO_COM_SUCESSO}, 200
             return {'message': MessagensEnumSites.SITE_OCORREU_UM_ERRO_DELETAR}, 500
-        return {'message': MessagensEnumSites.SITE_NÃO_ENCONTRATO_PARA_DELETAR}, 404
+        return {'message': MessagensEnumSites.SITE_NAO_ENCONTRATO_PARA_DELETAR}, 404
