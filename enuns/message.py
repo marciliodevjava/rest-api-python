@@ -6,7 +6,7 @@ class MessagensEnumUsuario(Enum):
     ERRO_USUARIO_NOT_FOUND = 'Usuario não existe.'
     USUARIO_DELETADO_COM_SUCESSO = 'Usuário {} deletado com sucesso!'
     OCORREU_UM_ERRO_AO_SALVAR_USUARIO = 'Ocorreu um erro para salvar o usuário'
-    USUARIO_CRIADO_COM_SUCESSO = 'Ocorreu um erro para salvar o usuário'
+    USUARIO_CRIADO_COM_SUCESSO = 'Usuário {} criado com sucesso!'
     USUARIO_COM_LOGIN_JA_EXISTE = 'Usuário com o login {} já existe'
     USUARIO_LOGADO_COM_SUCESSO = 'Usuario Logado com SUCESSO!'
     SENHA_INCORRETA = 'Senha INCORRETA, tente novamente'
@@ -18,6 +18,7 @@ class MessagensEnumUsuario(Enum):
 
 
 class MessagensEnumHotel(Enum):
+    MENSAGEM_PARANS_SITE = 'Site não enviado'
     HOTEL_NOT_FOUND = 'Hotel not found.'
     HOTEL_COM_NAO_PODE_NULO = 'O campo hotel_id não pode ser nulo.'
     HOTEL_EXISTE_NA_BASE_DE_DADO = 'Hotel já existe na base de dados.'
