@@ -18,6 +18,7 @@ class MessagensEnumUsuario(Enum):
 
 
 class MessagensEnumHotel(Enum):
+    HOTEL_TOKEN_EXPIRADO = 'Token Expirado.'
     MENSAGEM_PARANS_SITE = 'Site não enviado'
     HOTEL_NOT_FOUND = 'Hotel not found.'
     HOTEL_COM_NAO_PODE_NULO = 'O campo hotel_id não pode ser nulo.'
