@@ -40,6 +40,8 @@ class SitesModel(Base):
     @classmethod
     def deletar_site_id(cls, site):
         try:
+            #Deletando todos hoteis associados ao site
+            [hotel.delete_hotel_model() for hotel in cls.hoteis_id]
             session.delete(site)
             session.commit()
             return True
