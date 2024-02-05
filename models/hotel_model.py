@@ -14,7 +14,7 @@ class HotelModel(Base):
 
     #    site = relationship('SitesModel')
 
-    def __init__(self, hotel_id, nome, estrelas, diaria, cidade, site_id):
+    def __init__(self, hotel_id, nome, estrelas, diaria, cidade, site_id, **dados):
         self.hotel_id = hotel_id
         self.nome = nome
         self.estrelas = estrelas
