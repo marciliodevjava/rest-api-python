@@ -41,5 +41,5 @@ class MessagensEnumSites(Enum):
     SITE_ERRO_AO_SALVAR_SITE = "Erro ao salvar site."
     SITE_DELETADO_COM_SUCESSO = 'Site deletado com sucesso.'
     SITE_OCORREU_UM_ERRO_DELETAR = 'Ocorreu um erro ao deletar site.'
-    SITE_NÃO_ENCONTRATO_PARA_DELETAR = 'Site não foi encontrato para ser deletado.'
-    SITE_JÁ_EXISTE_NA_BASE_DE_DADOS = 'O site já existe na base de dados.'
+    SITE_NAO_ENCONTRATO_PARA_DELETAR = 'Site não foi encontrato para ser deletado.'
+    SITE_JA_EXISTE_NA_BASE_DE_DADOS = 'O site já existe na base de dados.'
