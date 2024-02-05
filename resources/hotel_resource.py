@@ -2,6 +2,7 @@ import sqlite3
 
 from flask import request
 from flask_jwt_extended import jwt_required
+from flask_jwt_extended.exceptions import NoAuthorizationError
 from flask_restful import Resource, reqparse
 from jwt import ExpiredSignatureError
 
@@ -62,7 +63,7 @@ class Hotel(Resource):
                                    help=MessagensEnumHotel.MENSAGEM_PARANS_ESTRELAS)
         self.__parser.add_argument('diaria', type=float, required=True, help=MessagensEnumHotel.MENSAGEM_PARANS_DIARIA)
         self.__parser.add_argument('cidade', type=str, required=True, help=MessagensEnumHotel.MENSAGEM_PARANS_CIDADE)
-        self.__parser.add_argument('site_id', type=int, required=True, help=MessagensEnumHotel.MENSAGEM_PARANS_SITE )
+        self.__parser.add_argument('site_id', type=int, required=True, help=MessagensEnumHotel.MENSAGEM_PARANS_SITE)
 
     def get(self, hotel_id):
         hotel = session.query(HotelModel).filter_by(hotel_id=hotel_id).first()
@@ -105,6 +106,7 @@ class Hotel(Resource):
             hotel.estrelas = dados['estrelas']
             hotel.diaria = dados['diaria']
             hotel.cidade = dados['cidade']
+            hotel.site_id = dados['site_id']
             try:
                 session.commit()
             except:
@@ -114,19 +116,22 @@ class Hotel(Resource):
             try:
                 session.add(hotel_objeto)
                 session.commit()
+            except NoAuthorizationError as e:
+                return {'message': MessagensEnumHotel.HOTEL_TOKEN_EXPIRADOO}, 500
             except Exception as e:
                 return {'message': MessagensEnumHotel.HOTEL_OCOREU_ERRO_GRAVAR_INFORMACAO}, 500
             return {'hotel': hotel_objeto.json()}, 201
 
-    @jwt_required()
-    def delete(self, hotel_id):
-        hotel = HotelModel.busca_hotel(hotel_id)
-        if hotel:
-            try:
-                session.delete(hotel)
-                session.commit()
-            except Exception as e:
-                return {'message': MessagensEnumHotel.HOTEL_ERRO_DELETAR_INFORMACAO}, 500
-            return {'mensagem': MessagensEnumHotel.HOTEL_REMOVIDO_COM_SUCESSO}
 
-        return {'mensagem': MessagensEnumHotel.HOTEL_NOT_FOUND}, 404
+@jwt_required()
+def delete(self, hotel_id):
+    hotel = HotelModel.busca_hotel(hotel_id)
+    if hotel:
+        try:
+            session.delete(hotel)
+            session.commit()
+        except Exception as e:
+            return {'message': MessagensEnumHotel.HOTEL_ERRO_DELETAR_INFORMACAO}, 500
+        return {'mensagem': MessagensEnumHotel.HOTEL_REMOVIDO_COM_SUCESSO}
+
+    return {'mensagem': MessagensEnumHotel.HOTEL_NOT_FOUND}, 404
