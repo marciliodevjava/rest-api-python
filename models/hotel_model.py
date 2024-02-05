@@ -29,7 +29,7 @@ class HotelModel(Base):
             'estrelas': float(self.estrelas),
             'diaria': float(self.diaria),
             'cidade': str(self.cidade),
-            'site_id': int(self.site_id)
+            'site_id': self.site_id
         }
 
     def salva_hotel(self):
