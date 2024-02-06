@@ -1,6 +1,7 @@
 from sqlalchemy import Column, String, Integer
 from sqlalchemy.orm import relationship
 
+from models.hotel_model import HotelModel
 from sql_alchemy import Base, session
 
 
@@ -38,10 +39,15 @@ class SitesModel(Base):
         return None
 
     @classmethod
-    def deletar_site_id(cls, site):
+    def deletar_site_id(cls, site, hoteis_id):
         try:
-            #Deletando todos hoteis associados ao site
-            [hotel.delete_hotel_model() for hotel in cls.hoteis_id]
+            # Deletando todos hoteis associados ao site
+            if hoteis_id:
+                hotel = session.query(HotelModel).filter_by(hotel_id=hoteis_id).first()
+                session.delete(hotel)
+                session.commit()
+
+            session.commit()
             session.delete(site)
             session.commit()
             return True
