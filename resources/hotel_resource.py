@@ -122,16 +122,15 @@ class Hotel(Resource):
                 return {'message': MessagensEnumHotel.HOTEL_OCOREU_ERRO_GRAVAR_INFORMACAO}, 500
             return {'hotel': hotel_objeto.json()}, 201
 
+    @jwt_required()
+    def delete(self, hotel_id):
+        hotel = HotelModel.busca_hotel(hotel_id)
+        if hotel:
+            try:
+                session.delete(hotel)
+                session.commit()
+            except Exception as e:
+                return {'message': MessagensEnumHotel.HOTEL_ERRO_DELETAR_INFORMACAO}, 500
+            return {'mensagem': MessagensEnumHotel.HOTEL_REMOVIDO_COM_SUCESSO}
 
-@jwt_required()
-def delete(self, hotel_id):
-    hotel = HotelModel.busca_hotel(hotel_id)
-    if hotel:
-        try:
-            session.delete(hotel)
-            session.commit()
-        except Exception as e:
-            return {'message': MessagensEnumHotel.HOTEL_ERRO_DELETAR_INFORMACAO}, 500
-        return {'mensagem': MessagensEnumHotel.HOTEL_REMOVIDO_COM_SUCESSO}
-
-    return {'mensagem': MessagensEnumHotel.HOTEL_NOT_FOUND}, 404
+        return {'mensagem': MessagensEnumHotel.HOTEL_NOT_FOUND}, 404
