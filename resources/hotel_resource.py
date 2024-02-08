@@ -31,6 +31,7 @@ class Hoteis(Resource):
             'limit': limit
         }
 
+    @jwt_required()
     def get(self):
         connection = sqlite3.connect('banco.db')
         cursor = connection.cursor()
