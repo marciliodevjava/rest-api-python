@@ -20,7 +20,7 @@ class Site(Resource):
         self.__sites_parans = reqparse.RequestParser()
         self.__sites_parans.add_argument('url', type=str, required=True, help=MessagensEnumSites.MENSAGEM_PARANS_URL)
         self.__sites_parans.add_argument('nome', type=str, required=True, help=MessagensEnumSites.MENSAGEM_PARANS_NOME)
-        self.__sites_parans.add_argument('hoteis', type=str, required=True, help=MessagensEnumSites.MENSAGEM_PARANS_HOTEL)
+        self.__sites_parans.add_argument('hoteis', type=str, required=False, help=MessagensEnumSites.MENSAGEM_PARANS_HOTEL)
 
     def get(self, url):
         try:
@@ -51,7 +51,7 @@ class Site(Resource):
 
     def delete(self, site_id):
         site = SitesModel.buscar_site_id(site_id)
-        hotel = site.hoteis_id[0].hotel_id
+        hotel = site.hoteis_id
         if site:
             result = SitesModel.deletar_site_id(site, hotel)
             if result:
