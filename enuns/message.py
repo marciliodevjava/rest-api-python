@@ -18,6 +18,7 @@ class MessagensEnumUsuario(Enum):
 
 
 class MessagensEnumHotel(Enum):
+    HOTEL_NAO_EXISTE = 'Hotel não pode ser salvopois o site não existe'
     HOTEL_TOKEN_EXPIRADO = 'Token Expirado.'
     MENSAGEM_PARANS_SITE = 'Site não enviado'
     HOTEL_NOT_FOUND = 'Hotel not found.'
