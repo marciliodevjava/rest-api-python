@@ -9,6 +9,7 @@ from jwt import ExpiredSignatureError
 from enuns.message import MessagensEnumHotel
 from filtros.filtros import FiltroHotel
 from models.hotel_model import HotelModel
+from models.sites_model import SitesModel
 from sql_alchemy import session
 
 
@@ -80,19 +81,22 @@ class Hotel(Resource):
 
         hotel_objeto = HotelModel(hotel_id, **dados)
         hotel = HotelModel.busca_hotel(hotel_id)
-        if hotel:
-            return {'message': MessagensEnumHotel.HOTEL_EXISTE_NA_BASE_DE_DADO,
-                    'hotel': hotel.json()}, 200
+        site = session.query(SitesModel).filter_by(site_id=hotel_objeto.site_id).first()
+        if site:
+            if hotel:
+                return {'message': MessagensEnumHotel.HOTEL_EXISTE_NA_BASE_DE_DADO,
+                        'hotel': hotel.json()}, 200
 
-        try:
-            session.add(hotel_objeto)
-            session.commit()
-        except Exception as e:
-            return {'message': MessagensEnumHotel.HOTEL_OCOREU_ERRO_GRAVAR_INFORMACAO}, 500
-        except ExpiredSignatureError as e:
-            return {'message': MessagensEnumHotel.HOTEL_TOKEN_EXPIRADO}, 500
-        return {'message': MessagensEnumHotel.HOTEL_ADICIONADO_COM_SUCESSO,
-                'hotel': hotel_objeto.json()}, 201
+            try:
+                session.add(hotel_objeto)
+                session.commit()
+            except Exception as e:
+                return {'message': MessagensEnumHotel.HOTEL_OCOREU_ERRO_GRAVAR_INFORMACAO}, 500
+            except ExpiredSignatureError as e:
+                return {'message': MessagensEnumHotel.HOTEL_TOKEN_EXPIRADO}, 500
+            return {'message': MessagensEnumHotel.HOTEL_ADICIONADO_COM_SUCESSO,
+                    'hotel': hotel_objeto.json()}, 201
+        return {'message': MessagensEnumHotel.HOTEL_NAO_EXISTE}
 
     @jwt_required()
     def put(self, hotel_id):
