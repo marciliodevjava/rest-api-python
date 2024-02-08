@@ -43,9 +43,11 @@ class SitesModel(Base):
         try:
             # Deletando todos hoteis associados ao site
             if hoteis_id:
-                hotel = session.query(HotelModel).filter_by(hotel_id=hoteis_id).first()
-                session.delete(hotel)
-                session.commit()
+                for hotel in hoteis_id:
+                    id = hotel.hotel_id
+                    hotel = session.query(HotelModel).filter_by(hotel_id=id).first()
+                    session.delete(hotel)
+                    session.commit()
 
             session.commit()
             session.delete(site)
