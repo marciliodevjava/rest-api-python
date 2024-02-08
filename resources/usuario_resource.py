@@ -26,6 +26,7 @@ class Usuario(Resource):
         self.__parcer.add_argument('login', type=str)
         self.__parcer.add_argument('senha', type=str)
 
+    @jwt_required()
     def get(self, user_id):
         usuario = session.query(UsuarioModel).filter_by(user_id=user_id).first()
         if usuario:
