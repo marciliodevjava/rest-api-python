@@ -33,28 +33,37 @@ class Hoteis(Resource):
 
     @jwt_required()
     def get(self):
-        connection = sqlite3.connect('banco.db')
-        cursor = connection.cursor()
+        try:
+            connection = sqlite3.connect('banco.db')
+            cursor = connection.cursor()
 
-        dados = self.retorna_filtros()
-        dados_validos = {chave: dados[chave] for chave in dados if dados[chave] is not None}
+            dados = self.retorna_filtros()
+            dados_validos = {chave: dados[chave] for chave in dados if dados[chave] is not None}
 
-        filtro = FiltroHotel.normalize_path_params(**dados_validos)
-        offset = FiltroHotel.normalize_filter_offset(**dados_validos)
-        limit = FiltroHotel.normalize_filter_limit(**dados_validos)
+            filtro = FiltroHotel.normalize_path_params(**dados_validos)
+            offset = FiltroHotel.normalize_filter_offset(**dados_validos)
+            limit = FiltroHotel.normalize_filter_limit(**dados_validos)
 
-        if filtro:
-            hotel = session.query(HotelModel).order_by(HotelModel.nome).filter_by(**filtro).offset(offset).limit(
-                limit).all()
-            if hotel:
-                hoteis = [hoteis.json() for hoteis in hotel]
-                return {'Hoteis': hoteis}
+            if filtro:
+                hotel = session.query(HotelModel).order_by(HotelModel.nome).filter_by(**filtro).offset(offset).limit(
+                    limit).all()
+                if hotel:
+                    hoteis = [hoteis.json() for hoteis in hotel]
+                    return {'Hoteis': hoteis}
+                else:
+                    return {'message': MessagensEnumHotel.HOTEL_SOLICITACAO_SEM_CONTEUDO}
             else:
-                return {'message': MessagensEnumHotel.HOTEL_SOLICITACAO_SEM_CONTEUDO}
-        else:
-            hotel = session.query(HotelModel).order_by(HotelModel.nome).offset(offset).limit(limit).all()
-        hoteis = [hoteis.json() for hoteis in hotel]
-        return {'Hoteis': hoteis}
+                hotel = session.query(HotelModel).order_by(HotelModel.nome).offset(offset).limit(limit).all()
+            hoteis = [hoteis.json() for hoteis in hotel]
+
+            return {'Hoteis': hoteis}
+        except ExpiredSignatureError as e:
+            # Se ocorrer um ExpiredSignatureError, retornar uma resposta JSON adequada
+            return {'message': MessagensEnumHotel.HOTEL_TOKEN_EXPIRADO}, 404
+
+        except Exception as e:
+            # Lidar com outros erros aqui se necessário
+            return {'message': MessagensEnumHotel.HOTEL_OCORREU_ERRO_NA_REQUISAO}, 404
 
 
 class Hotel(Resource):
