@@ -49,7 +49,8 @@ class Site(Resource):
                         return {'Site': site.json()}, 201
                     except:
                         return {'message': MessagensEnumSites.SITE_ERRO_AO_SALVAR_SITE}, 500
-                return {'message': MessagensEnumSites.SITE_JA_EXISTE_NA_BASE_DE_DADOS}, 400
+                return {'message': MessagensEnumSites.SITE_JA_EXISTE_NA_BASE_DE_DADOS,
+                        'site': buscar_site.json()}, 400
         except:
             return {'message': MessagensEnumSites.SITE_ERRO_ENVIAR_PARAMETROS}, 500
 
