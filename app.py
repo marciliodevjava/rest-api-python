@@ -44,12 +44,14 @@ def token_revoked_callback(jwt_header, jwt_data):
 @jwt.expired_token_loader
 def token_expired_token_loader(jwt_data):
     BLACKLIST.add(jwt_data['jti'])
-    return jsonify({'message': 'Token has been expired'}), 401
+    return jsonify({'message': 'Token has expired', 'error': 'token_expired'}), 401
+
 
 @jwt.invalid_token_loader
 def token_invalid_token_loader(jwt_data):
     BLACKLIST.add(jwt_data['jti'])
-    return jsonify({'message': 'Token has been expired'}), 401
+    return jsonify({'message': 'Invalid token', 'error': 'token_invalid'}), 401
+
 
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
